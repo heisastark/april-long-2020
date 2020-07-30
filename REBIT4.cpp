@@ -1,0 +1,114 @@
+#include<bits/stdc++.h>
+#define ll long long int
+#define db double
+#define pb push_back
+#define fin for(int i=0; i<n; i++)
+#define FASTIO ios_base::sync_with_stdio(false); cin.tie(NULL)
+#define MOD 998244353
+using namespace std;
+ll power(ll x, ll y, ll p){ 
+    ll res = 1;      // Initialize result 
+  
+    x = x % p;  // Update x if it is more than or 
+                // equal to p 
+  
+    while (y > 0){ 
+        // If y is odd, multiply x with result 
+        if (y & 1) 
+            res = (res*x) % p; 
+  
+        // y must be even now 
+        y = y>>1; // y = y/2 
+        x = (x*x) % p; 
+    } 
+    return res; 
+} 
+  
+// Returns n^(-1) mod p 
+ll modInverse(ll n, ll p){ 
+    return power(n, p-2, p); 
+} 
+
+int main(){
+	FASTIO;
+    int t;
+    scanf("%d", &t);
+    while(t--){
+        string s; cin>>s;
+        //vector<int> v1{1,1,1,1}, v2{1,1,1,1}, v{0,0,0,0};
+
+        stack<char> st;
+
+        ll v1[4],v2[4],v[4];
+        for(int i=0; i<4; i++){
+            v1[i]=1;
+            v2[i]=1;
+            v[i]=0;
+        }
+
+        for(auto x: s){
+        	if(x=='#' || x=='^' || x=='&' || x=='|' || x=='('){
+        		st.push(x);
+        	}
+        	else if(x==')'){
+        		string temp = "";
+        		temp += st.top(); st.pop();
+        		temp += st.top(); st.pop();
+        		temp += st.top(); st.pop(); st.pop();
+        		
+        		if(st.top()=='^' || st.top()=='&' || st.top()=='|'){
+        			if(temp[1]=='&'){
+        		v2[0]+=v1[0]*v2[0]+v1[1]*v2[0]+v1[0]*v2[1]+v1[2]*v2[0]+v1[0]*v2[2]+v1[3]*v2[2]+v1[2]*v2[3]+v1[0]*v2[3]+v1[3]*v2[0];
+                v2[1]+=v1[1]*v2[1];
+                v2[2]+=v1[1]*v2[2]+v1[2]*v2[1]+v1[2]*v2[2];
+                v2[3]+=v1[3]*v2[3]+v1[1]*v2[3]+v1[3]*v2[1];
+        			}
+        			if(temp[1]=='^'){
+        		v2[0]+=v1[0]*v2[0]+v1[1]*v2[1]+v1[2]*v2[2]+v1[3]*v2[3];
+                v2[1]+=v1[0]*v2[1]+v1[1]*v2[0]+v1[2]*v2[3]+v1[3]*v2[2];
+                v2[2]+=v1[0]*v2[2]+v1[1]*v2[3]+v1[2]*v2[0]+v1[3]*v2[1];
+                v2[3]+=v1[0]*v2[3]+v1[1]*v2[2]+v1[2]*v2[1]+v1[3]*v2[0];
+        			}
+        			if(temp[1]=='|'){
+        		v2[0]+=v1[0]*v2[0];
+                v2[1]+=v1[0]*v2[1]+v1[1]*v2[0]+v1[1]*v2[1]+v1[1]*v2[2]+v1[1]*v2[3]+v1[2]*v2[1]+v1[3]*v2[1]+v1[3]*v2[2]+v1[2]*v2[3];
+                v2[2]+=v1[0]*v2[2]+v1[2]*v2[0]+v1[2]*v2[2];
+                v2[3]+=v1[0]*v2[3]+v1[3]*v2[0]+v1[3]*v2[3];
+        			}
+        		}
+        		else{
+        			if(temp[1]=='&'){
+        			v1[0]+=v1[0]*v2[0]+v1[1]*v2[0]+v1[0]*v2[1]+v1[2]*v2[0]+v1[0]*v2[2]+v1[3]*v2[2]+v1[2]*v2[3]+v1[0]*v2[3]+v1[3]*v2[0];
+                v1[1]+=v1[1]*v2[1];
+                v1[2]+=v1[1]*v2[2]+v1[2]*v2[1]+v1[2]*v2[2];
+                v1[3]+=v1[3]*v2[3]+v1[1]*v2[3]+v1[3]*v2[1];
+        			}
+        			if(temp[1]=='^'){
+        			v1[0]+=v1[0]*v2[0]+v1[1]*v2[1]+v1[2]*v2[2]+v1[3]*v2[3];
+                v1[1]+=v1[0]*v2[1]+v1[1]*v2[0]+v1[2]*v2[3]+v1[3]*v2[2];
+                v1[2]+=v1[0]*v2[2]+v1[1]*v2[3]+v1[2]*v2[0]+v1[3]*v2[1];
+                v1[3]+=v1[0]*v2[3]+v1[1]*v2[2]+v1[2]*v2[1]+v1[3]*v2[0];
+        			}
+        			if(temp[1]=='|'){
+        		v1[0]+=v1[0]*v2[0];
+               	v1[1]+=v1[0]*v2[1]+v1[1]*v2[0]+v1[1]*v2[1]+v1[1]*v2[2]+v1[1]*v2[3]+v1[2]*v2[1]+v1[3]*v2[1]+v1[3]*v2[2]+v1[2]*v2[3];
+                v1[2]+=v1[0]*v2[2]+v1[2]*v2[0]+v1[2]*v2[2];
+                v1[3]+=v1[0]*v2[3]+v1[3]*v2[0]+v1[3]*v2[3];
+        		}
+        	}
+
+        }
+    }
+        ll total=0;
+        for(auto x: v1){
+            total+=x;
+        }
+        ll p1 = ((v1[0]%MOD)*(modInverse(total, MOD)))%MOD;
+        ll p2 = ((v1[1]%MOD)*(modInverse(total, MOD)))%MOD;
+        ll p3 = ((v1[2]%MOD)*(modInverse(total, MOD)))%MOD;
+        ll p4 = ((v1[3]%MOD)*(modInverse(total, MOD)))%MOD;
+
+        cout<<((p1%MOD)*(modInverse(total, MOD)))%MOD<<" "<<((p2%MOD)*(modInverse(total, MOD)))%MOD<<" "<<((p3%MOD)*(modInverse(total, MOD)))%MOD<<" "<<((p4%MOD)*(modInverse(total, MOD)))%MOD<<endl;
+    }
+    return 0;
+}
